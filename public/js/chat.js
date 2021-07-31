@@ -1,4 +1,4 @@
-const socket = io("http://localhost:3000/")
+const socket = io("https://rocket-chat-socket.herokuapp.com/")
 let idChatRoom = "";
 
 function onLoad() {
