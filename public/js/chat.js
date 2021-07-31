@@ -29,10 +29,19 @@ function onLoad() {
         addUser(user);
       }
     });
+  });
 
-    socket.on("message", ({ message, user }) => {
+  socket.on("message", ({ message, user }) => {
+    if (message.roomId === idChatRoom) {
       addMessage({ message, user });
-    })
+    }
+  });
+
+  socket.on("notification", (data) => {
+    if (!idChatRoom || data.roomId !== idChatRoom) {
+      const user = document.getElementById(`user_${data.from._id}`);
+      user.insertAdjacentHTML("afterbegin", `<div class="notification"></div>`);
+    }
   })
 }
 
@@ -59,23 +68,21 @@ function addUser(user) {
 }
 
 document.getElementById("users_list").addEventListener("click", (event) => {
-  document.getElementById("message_user").innerHTML = "";
+  const inputMessage = document.getElementById("user_message");
+  inputMessage.classList.remove("hidden");
 
+  document.querySelectorAll("li.user_name_list").forEach(item => item.classList.remove("user_in_focus"));
+  document.getElementById("message_user").innerHTML = "";
+  
   if (event.target && event.target.matches("li.user_name_list")) {
     const idUser = event.target.getAttribute("idUser");
+    event.target.classList.add("user_in_focus");
+
+    const notification = document.querySelector(`#user_${idUser} .notification`);
+    if (notification) notification.remove();
+
     socket.emit("start_chat", { idUser }, ({ room, messages }) => {
       idChatRoom = room.idChatRoom;
-
-      // if (messages.length < 1) {
-      //   const HTMLNoMessages = `
-      //   <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
-      //   <span>Não há mensagens com esse usuário.</span>
-      //   </div>
-      //   `;
-
-      //   document.getElementById("message_user").innerHTML = HTMLNoMessages;
-      //   return;
-      // }
 
       messages.forEach(message => {
         const data = { message, user: message.to };
