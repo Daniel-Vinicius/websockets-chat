@@ -30,15 +30,30 @@ function onLoad() {
       }
     });
 
-  socket.on("message", ({ message, user }) => {
-    // console.log(message, user)
+    socket.on("message", ({ message, user }) => {
+      addMessage({ message, user });
     })
   })
 }
 
+function addMessage(data) {
+  const { user, message } = data;
+
+  const HTMLMessages = `
+    <span class="user_name user_name_date"> <img class="img_user" src=${user.avatar}/>
+    <strong>${user.name} &nbsp;</strong> <span>${dayjs(message.created_at).format("DD/MM/YYYY HH:mm")}</span></span>
+    <div class="messages">
+    <span class="chat_message">${message.text}</span>
+    </div>
+    `;
+
+  const MessagesList = document.getElementById("message_user");
+  MessagesList.innerHTML += HTMLMessages;
+}
+
 function addUser(user) {
   const HTMLUsers = `<li class="user_name_list" id="user_${user._id}" idUser="${user._id}"> <img class="nav_avatar" src=${user.avatar} /> ${user.name} </li>`;
-  
+
   const usersList = document.getElementById("users_list");
   usersList.innerHTML += HTMLUsers;
 }
@@ -46,8 +61,13 @@ function addUser(user) {
 document.getElementById("users_list").addEventListener("click", (event) => {
   if (event.target && event.target.matches("li.user_name_list")) {
     const idUser = event.target.getAttribute("idUser");
-    socket.emit("start_chat", { idUser }, (room) => {
+    socket.emit("start_chat", { idUser }, ({ room, messages }) => {
       idChatRoom = room.idChatRoom;
+
+      messages.forEach(message => {
+        const data = { message, user: message.to };
+        addMessage(data);
+      });
     })
   }
 })
