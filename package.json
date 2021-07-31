@@ -5,7 +5,10 @@
   "author": "Daniel Vinícius <dev.dan.programador@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev src/server.ts"
+    "dev": "ts-node-dev src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "postinstall": "yarn build"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
