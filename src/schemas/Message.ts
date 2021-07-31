@@ -14,8 +14,7 @@ const MessageSchema = new Schema({
   },
   text: String,
   created_at: {
-    type: Date,
-    default: Date.now()
+    type: Date
   },
   roomId: {
     type: String,
