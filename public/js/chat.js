@@ -59,10 +59,23 @@ function addUser(user) {
 }
 
 document.getElementById("users_list").addEventListener("click", (event) => {
+  document.getElementById("message_user").innerHTML = "";
+
   if (event.target && event.target.matches("li.user_name_list")) {
     const idUser = event.target.getAttribute("idUser");
     socket.emit("start_chat", { idUser }, ({ room, messages }) => {
       idChatRoom = room.idChatRoom;
+
+      // if (messages.length < 1) {
+      //   const HTMLNoMessages = `
+      //   <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+      //   <span>Não há mensagens com esse usuário.</span>
+      //   </div>
+      //   `;
+
+      //   document.getElementById("message_user").innerHTML = HTMLNoMessages;
+      //   return;
+      // }
 
       messages.forEach(message => {
         const data = { message, user: message.to };
