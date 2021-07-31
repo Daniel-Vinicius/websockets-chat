@@ -41,6 +41,8 @@ function onLoad() {
     if (!idChatRoom || data.roomId !== idChatRoom) {
       const user = document.getElementById(`user_${data.from._id}`);
       user.insertAdjacentHTML("afterbegin", `<div class="notification"></div>`);
+      const audio = new Audio("../audio/notification.wav");
+      audio.play();
     }
   })
 }
